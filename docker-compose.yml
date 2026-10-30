@@ -1,0 +1,61 @@
+services:
+  # Database Service
+  db:
+    # Use the postgres:16-alpine image (no Dockerfile needed, so use image: instead of build:)
+
+    # Set POSTGRES_USER, POSTGRES_PASSWORD, and POSTGRES_DB using the values from your .env file
+    #     - Hint: - POSTGRES_USER=${POSTGRES_USER}
+
+    # Add a volume to save the database data
+    #     - Hint: {volume name}:/var/lib/postgresql/data
+
+    # Connect the database to the network created below
+
+  # Backend Service
+  backend:
+    # Connect your build to the FOLDER location of your backend Dockerfile
+
+    # Connect an open localhost port to your exposed backend port
+
+    # Add two volumes:
+    #     1. Your local backend folder -> the working directory in your Dockerfile
+    #     2. A named volume for node_modules -> {working directory}/node_modules
+    #        (name it anything, Docker creates it for you)
+
+    # Keep NODE_ENV, then add STUDENT_NAME, DB_HOST, DB_USER, DB_PASSWORD, and DB_NAME
+    #     - Hint: DB_HOST is the name of your database service
+    #     - Hint: DB_USER, DB_PASSWORD, and DB_NAME use the same .env values as Postgres
+    environment:
+      - NODE_ENV=production
+
+    # Make the backend start after the database
+    #     - Hint: depends_on: -> - {database service name}
+
+    # Connect the backend to the network created below
+
+  # Frontend Service
+  frontend:
+    # Connect your build to the FOLDER location of your frontend Dockerfile
+
+    # Connect an open localhost port to your exposed frontend port
+
+    # Add two volumes (same as the backend, but for the frontend folder)
+
+    # Leave this as is
+    environment:
+      - NODE_ENV=development
+      - NODE_OPTIONS=--openssl-legacy-provider
+
+    # This makes sure the frontend starts after the backend
+    depends_on:
+      - backend
+
+    # Connect the frontend to the network created below
+
+volumes:
+  # List all three volume names you created (two for node_modules, one for the database)
+  #     - Hint: {volume name}:
+
+networks:
+  app-network:
+    driver: bridge
